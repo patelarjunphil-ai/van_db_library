@@ -1,0 +1,22 @@
+{
+    "name": "jules/codeigniter-db-library",
+    "description": "A reusable CodeIgniter 4 database integration library.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jules\\CodeIgniterDbLibrary\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jules"
+        }
+    ],
+    "require": {
+        "codeigniter4/framework": "^4.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.4"
+    }
+}

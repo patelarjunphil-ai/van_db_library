@@ -1,0 +1,1 @@
+{"version":2,"defects":{"DatabaseTest::testJoin":8,"DatabaseTest::testTransactionCommit":8,"DatabaseTest::testTransactionRollback":8},"times":{"DatabaseTest::testJoin":0.013,"DatabaseTest::testTransactionCommit":0.001,"DatabaseTest::testTransactionRollback":0.001}}
