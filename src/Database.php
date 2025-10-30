@@ -6,6 +6,7 @@ use Config\Database as ConfigDatabase;
 
 class Database
 {
+    /** @var \CodeIgniter\Database\BaseConnection */
     public $db;
 
     public function __construct(array $params = [])
