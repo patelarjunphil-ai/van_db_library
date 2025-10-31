@@ -3,13 +3,18 @@
 namespace Jules\CodeIgniterDbLibrary;
 
 use Config\Database as ConfigDatabase;
+use CodeIgniter\Database\Exceptions\DatabaseException;
+use Psr\Log\LoggerInterface;
 
 class Database
 {
     /** @var \CodeIgniter\Database\BaseConnection */
     public $db;
 
-    public function __construct(array $params = [])
+    /** @var LoggerInterface */
+    protected $logger;
+
+    public function __construct(array $params = [], LoggerInterface $logger = null)
     {
         // If no parameters are provided, use the default connection
         if (empty($params)) {
@@ -36,6 +41,8 @@ class Database
             ];
             $this->db = ConfigDatabase::connect($db_config);
         }
+
+        $this->logger = $logger;
     }
 
     public function select(string $table, array $where = [])
@@ -43,20 +50,62 @@ class Database
         return $this->db->table($table)->where($where);
     }
 
+    public function get()
+    {
+        return $this->db->get();
+    }
+
+    public function limit(int $limit, int $offset = 0)
+    {
+        return $this->db->limit($limit, $offset);
+    }
+
+    public function orderBy(string $orderBy, string $direction = 'ASC')
+    {
+        return $this->db->orderBy($orderBy, $direction);
+    }
+
+    public function groupBy(string $groupBy)
+    {
+        return $this->db->groupBy($groupBy);
+    }
+
+
     public function insert(string $table, array $data)
     {
-        $this->db->table($table)->insert($data);
-        return $this->db->insertID();
+        try {
+            $this->db->table($table)->insert($data);
+            return $this->db->insertID();
+        } catch (DatabaseException $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage());
+            }
+            return false;
+        }
     }
 
     public function update(string $table, array $data, array $where)
     {
-        return $this->db->table($table)->where($where)->update($data);
+        try {
+            return $this->db->table($table)->where($where)->update($data);
+        } catch (DatabaseException $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage());
+            }
+            return false;
+        }
     }
 
     public function delete(string $table, array $where)
     {
-        return $this->db->table($table)->where($where)->delete();
+        try {
+            return $this->db->table($table)->where($where)->delete();
+        } catch (DatabaseException $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage());
+            }
+            return false;
+        }
     }
 
     public function beginTransaction()
@@ -76,7 +125,14 @@ class Database
 
     public function query(string $sql)
     {
-        return $this->db->query($sql);
+        try {
+            return $this->db->query($sql);
+        } catch (DatabaseException $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage());
+            }
+            return false;
+        }
     }
 
     public function join(string $table, string $condition, string $type = 'inner')
